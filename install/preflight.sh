@@ -11,35 +11,30 @@ source /etc/functions.sh
 
 echo -e "${YELLOW}Running pre-flight checks...${NC}\n"
 
-# Identify Ubuntu version and set permissions accordingly
-UBUNTU_DESCRIPTION=$(lsb_release -d | sed -E 's/([0-9]+\.[0-9]+)\.[0-9]+/\1/')
-UBUNTU_VERSION=$(lsb_release -rs | cut -c1-5)
+# Identify Ubuntu version and clean up the description
+UBUNTU_DESCRIPTION=$(lsb_release -d | sed -E 's/Description:\s*//; s/([0-9]+\.[0-9]+)\.[0-9]+/\1/')
 
-if [[ "${UBUNTU_VERSION}" == "20.04" ]]; then
+if [[ "${UBUNTU_DESCRIPTION}" == "Ubuntu 20.04 LTS" ]]; then
   DISTRO="Ubuntu 20.04 LTS"
-elif [[ "${UBUNTU_VERSION}" == "18.04" ]]; then
+elif [[ "${UBUNTU_DESCRIPTION}" == "Ubuntu 18.04 LTS" ]]; then
   DISTRO="Ubuntu 18.04 LTS"
-elif [[ "${UBUNTU_VERSION}" == "16.04" ]]; then
+elif [[ "${UBUNTU_DESCRIPTION}" == "Ubuntu 16.04 LTS" ]]; then
   DISTRO="Ubuntu 16.04 LTS"
-elif [[ "${UBUNTU_VERSION}" == "24.04" ]]; then
+elif [[ "${UBUNTU_DESCRIPTION}" == "Ubuntu 24.04 LTS" ]]; then
   DISTRO="Ubuntu 24.04 LTS"
-elif [[ "${UBUNTU_VERSION}" == "23.04" ]]; then
+elif [[ "${UBUNTU_DESCRIPTION}" == "Ubuntu 23.04 LTS" ]]; then
   DISTRO="Ubuntu 23.04 LTS"
-
-echo "This script only supports Ubuntu 16.04 LTS, 18.04 LTS, 20.04 LTS, 24.04 LTS, and 23.04 LTS."
-  exit 1
-fi
-
-echo "Detected Ubuntu Version: ${DISTRO}"
 else
   echo "This script only supports Ubuntu 16.04 LTS, 18.04 LTS, 20.04 LTS, 24.04 LTS, and 23.04 LTS."
   exit 1
 fi
 
+echo "Detected Ubuntu Version: ${DISTRO}"
+
 # Apply permissions based on the identified LTS version
 case "$DISTRO" in
-  16 | 18 | 20 | 24 | 23)
-    echo -e "${YELLOW}Setting permissions for Ubuntu $DISTRO...${NC}"
+  "Ubuntu 16.04 LTS" | "Ubuntu 18.04 LTS" | "Ubuntu 20.04 LTS" | "Ubuntu 24.04 LTS" | "Ubuntu 23.04 LTS")
+    echo -e "${YELLOW}Setting permissions for $DISTRO...${NC}"
     sudo chmod g-w /etc /etc/default /usr
     echo -e "${GREEN}Permissions set.${NC}\n"
     ;;
@@ -49,14 +44,6 @@ case "$DISTRO" in
     ;;
 esac
 
-
-
-
-# echo -e "${YELLOW}Setting permissions for Ubuntu $DISTRO...${NC}"
-# sudo chmod g-w /etc /etc/default /usr
-# echo -e "${GREEN}Permissions set.${NC}\n"
-
-
 # Check if swap is needed and allocate if necessary
 SWAP_MOUNTED=$(cat /proc/swaps | tail -n+2)
 SWAP_IN_FSTAB=$(grep "swap" /etc/fstab)
@@ -64,7 +51,7 @@ ROOT_IS_BTRFS=$(grep "\/ .*btrfs" /proc/mounts)
 TOTAL_PHYSICAL_MEM=$(head -n 1 /proc/meminfo | awk '{print $2}')
 AVAILABLE_DISK_SPACE=$(df / --output=avail | tail -n 1)
 
-if [ -z "$SWAP_MOUNTED" ] && [ -z "$SWAP_IN_FSTAB" ] && [ ! -e /swapfile ] && [ -z "$ROOT_IS_BTRFS" ] && [ $TOTAL_PHYSICAL_MEM -lt 1536000 ] && [ $AVAILABLE_DISK_SPACE -gt 5242880 ]; then
+if [ -z "$SWAP_MOUNTED" ] && [ -z "$SWAP_IN_FSTAB" ] && [ ! -e /swapfile ] && [ -z "$ROOT_IS_BTRFS" ] && [ "$TOTAL_PHYSICAL_MEM" -lt 1536000 ] && [ "$AVAILABLE_DISK_SPACE" -gt 5242880 ]; then
     echo -e "${YELLOW}Adding a swap file to the system...${NC}"
     
     # Allocate and activate the swap file
