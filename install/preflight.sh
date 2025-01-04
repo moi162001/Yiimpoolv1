@@ -14,35 +14,36 @@ echo -e "${YELLOW}Running pre-flight checks...${NC}\n"
 # Identify Ubuntu version and clean up the description
 UBUNTU_DESCRIPTION=$(lsb_release -d | sed -E 's/Description:\s*//; s/([0-9]+\.[0-9]+)\.[0-9]+/\1/')
 
-if [[ "${UBUNTU_DESCRIPTION}" == "Ubuntu 20.04 LTS" ]]; then
-  DISTRO="Ubuntu 20.04 LTS"
-elif [[ "${UBUNTU_DESCRIPTION}" == "Ubuntu 18.04 LTS" ]]; then
-  DISTRO="Ubuntu 18.04 LTS"
-elif [[ "${UBUNTU_DESCRIPTION}" == "Ubuntu 16.04 LTS" ]]; then
-  DISTRO="Ubuntu 16.04 LTS"
-elif [[ "${UBUNTU_DESCRIPTION}" == "Ubuntu 24.04 LTS" ]]; then
-  DISTRO="Ubuntu 24.04 LTS"
-elif [[ "${UBUNTU_DESCRIPTION}" == "Ubuntu 23.04 LTS" ]]; then
-  DISTRO="Ubuntu 23.04 LTS"
-else
-  echo "This script only supports Ubuntu 16.04 LTS, 18.04 LTS, 20.04 LTS, 24.04 LTS, and 23.04 LTS."
-  exit 1
-fi
+# Supported versions
+case "$UBUNTU_DESCRIPTION" in
+  "Ubuntu 20.04 LTS")
+    DISTRO="Ubuntu 20.04 LTS"
+    ;;
+  "Ubuntu 18.04 LTS")
+    DISTRO="Ubuntu 18.04 LTS"
+    ;;
+  "Ubuntu 16.04 LTS")
+    DISTRO="Ubuntu 16.04 LTS"
+    ;;
+  "Ubuntu 24.04 LTS")
+    DISTRO="Ubuntu 24.04 LTS"
+    ;;
+  "Ubuntu 23.04 LTS")
+    DISTRO="Ubuntu 23.04 LTS"
+    ;;
+  *)
+    echo "This script only supports Ubuntu 16.04 LTS, 18.04 LTS, 20.04 LTS, 24.04 LTS, and 23.04 LTS."
+    echo "Detected Ubuntu Version: ${UBUNTU_DESCRIPTION}"
+    exit 1
+    ;;
+esac
 
 echo "Detected Ubuntu Version: ${DISTRO}"
 
 # Apply permissions based on the identified LTS version
-case "$DISTRO" in
-  "Ubuntu 16.04 LTS" | "Ubuntu 18.04 LTS" | "Ubuntu 20.04 LTS" | "Ubuntu 24.04 LTS" | "Ubuntu 23.04 LTS")
-    echo -e "${YELLOW}Setting permissions for $DISTRO...${NC}"
-    sudo chmod g-w /etc /etc/default /usr
-    echo -e "${GREEN}Permissions set.${NC}\n"
-    ;;
-  *)
-    echo "Unsupported Ubuntu version: ${UBUNTU_DESCRIPTION}"
-    exit 1
-    ;;
-esac
+echo -e "${YELLOW}Setting permissions for $DISTRO...${NC}"
+sudo chmod g-w /etc /etc/default /usr
+echo -e "${GREEN}Permissions set.${NC}\n"
 
 # Check if swap is needed and allocate if necessary
 SWAP_MOUNTED=$(cat /proc/swaps | tail -n+2)
