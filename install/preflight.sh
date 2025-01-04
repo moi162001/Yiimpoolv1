@@ -12,21 +12,21 @@ source /etc/functions.sh
 echo -e "${YELLOW}Running pre-flight checks...${NC}\n"
 
 # Identify Ubuntu version and set permissions accordingly
-UBUNTU_DESCRIPTION=$(lsb_release -d | sed 's/.*:\s*//')
+UBUNTU_DESCRIPTION=$(lsb_release -d | sed -E 's/([0-9]+\.[0-9]+)\.[0-9]+/\1/')
 UBUNTU_VERSION=$(lsb_release -rs | cut -c1-5)
 
 if [[ "${UBUNTU_VERSION}" == "20.04" ]]; then
-  DISTRO="20.04 LTS"
+  DISTRO="Ubuntu 20.04 LTS"
 elif [[ "${UBUNTU_VERSION}" == "18.04" ]]; then
-  DISTRO="18.04 LTS"
+  DISTRO="Ubuntu 18.04 LTS"
 elif [[ "${UBUNTU_VERSION}" == "16.04" ]]; then
-  DISTRO="16.04 LTS"
+  DISTRO="Ubuntu 16.04 LTS"
 elif [[ "${UBUNTU_VERSION}" == "24.04" ]]; then
-  DISTRO="24.04 LTS"
+  DISTRO="Ubuntu 24.04 LTS"
 elif [[ "${UBUNTU_VERSION}" == "23.04" ]]; then
-  DISTRO="23.04 LTS"
-else
-  echo "This script only supports Ubuntu 16.04 LTS, 18.04 LTS, 20.04 LTS, 24.04 LTS, and 23.04 LTS."
+  DISTRO="Ubuntu 23.04 LTS"
+
+echo "This script only supports Ubuntu 16.04 LTS, 18.04 LTS, 20.04 LTS, 24.04 LTS, and 23.04 LTS."
   exit 1
 fi
 
