@@ -31,7 +31,7 @@ This installer provides an automated way to set up a full Yiimp mining pool on U
 ## Quick Install
 
 ```bash
-curl https://raw.githubusercontent.com/moi162001/Yiimpoolv1/refs/heads/master/install.sh | bash
+curl https://raw.githubusercontent.com/moi162001/Yiimpoolv1/master/install.sh | bash
 ```
 
 The installer will guide you through configuration options including:
