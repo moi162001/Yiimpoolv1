@@ -13,18 +13,24 @@ echo -e "${YELLOW}Running pre-flight checks...${NC}\n"
 
 # Identify Ubuntu version and set permissions accordingly
 UBUNTU_DESCRIPTION=$(lsb_release -d | sed 's/.*:\s*//')
-UBUNTU_VERSION=$(lsb_release -rs)
+UBUNTU_VERSION=$(lsb_release -rs | cut -c1-5)
 
-if [[ "${UBUNTU_DESCRIPTION}" == "Ubuntu 20.04 LTS" ]]; then
-  DISTRO=20
-elif [[ "${UBUNTU_DESCRIPTION}" == "Ubuntu 18.04 LTS" ]]; then
-  DISTRO=18
-elif [[ "${UBUNTU_DESCRIPTION}" == "Ubuntu 16.04 LTS" ]]; then
-  DISTRO=16
-elif [[ "${UBUNTU_DESCRIPTION}" == "Ubuntu 24.04 LTS" ]]; then
-  DISTRO=24
-elif [[ "${UBUNTU_DESCRIPTION}" == "Ubuntu 23.04 LTS" ]]; then
-  DISTRO=23
+if [[ "${UBUNTU_VERSION}" == "20.04" ]]; then
+  DISTRO="20.04 LTS"
+elif [[ "${UBUNTU_VERSION}" == "18.04" ]]; then
+  DISTRO="18.04 LTS"
+elif [[ "${UBUNTU_VERSION}" == "16.04" ]]; then
+  DISTRO="16.04 LTS"
+elif [[ "${UBUNTU_VERSION}" == "24.04" ]]; then
+  DISTRO="24.04 LTS"
+elif [[ "${UBUNTU_VERSION}" == "23.04" ]]; then
+  DISTRO="23.04 LTS"
+else
+  echo "This script only supports Ubuntu 16.04 LTS, 18.04 LTS, 20.04 LTS, 24.04 LTS, and 23.04 LTS."
+  exit 1
+fi
+
+echo "Detected Ubuntu Version: ${DISTRO}"
 else
   echo "This script only supports Ubuntu 16.04 LTS, 18.04 LTS, 20.04 LTS, 24.04 LTS, and 23.04 LTS."
   exit 1
